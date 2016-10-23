@@ -38,13 +38,12 @@ namespace
 
 		float x = 0.0f;
 		float y = 0.0f;
+		glBegin(GL_LINES);
 		for (int i = 1; i < 10; i++)
 		{
 			x = (centerX / 10) * i;
-
 			y = (centerY / 10) * i;
-
-			glBegin(GL_LINES);
+			
 			glVertex2f(centerX + x, size.y / 2 - 5);
 			glVertex2f(centerX + x, size.y / 2 + 5);
 
@@ -56,9 +55,9 @@ namespace
 
 			glVertex2f(size.x / 2 - 5, centerY - y);
 			glVertex2f(size.x / 2 + 5, centerY - y);
-			glEnd();
+			
 		}
-
+		glEnd();
 	}
 
 	void DrawCardioid(const glm::ivec2 & size)
