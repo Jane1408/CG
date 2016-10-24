@@ -1,5 +1,4 @@
 #include "stdafx.h"
-
 #include "FunctionSurface.h"
 #include <algorithm>
 
@@ -25,15 +24,12 @@ namespace
 	{
 		for (SVertexP3N &ver : vertices)
 		{
-			const float &positionX = ver.position.x - 1;
-			const float &positionY = ver.position.y - 7;
-
-			const float distance = std::sqrtf(std::powf(positionX, 2) / 2 + std::powf(positionY, 2) / 2);
-
+			const float factor = sqrt(0.5f);
+			const float distance = std::hypotf(ver.position.x - 1, ver.position.y - 7) * factor;
 			const float length = (std::abs(range.x - range.y));
-			const float normalizedX = std::abs(0 - distance) / (length / 2);
+			const float normalizedDistance = std::abs(0 - distance) / (length * factor);
 
-			const auto color = MAX_COLOR * normalizedX + MIN_COLOR * (1 - normalizedX);
+			const auto color = MAX_COLOR * normalizedDistance + MIN_COLOR * (1 - normalizedDistance);
 			ver.diffuseColor = color;
 		}
 	}
@@ -120,7 +116,9 @@ void CDottedFunctionSurface::Draw() const
 }
 
 CSolidFunctionSurface::CSolidFunctionSurface(const Function2D &fn)
-    : m_fn(fn)
+	: m_fn(fn)
+	, m_isColored(true)
+	, m_isFilled(true)
 {
 }
 
@@ -153,6 +151,7 @@ void CSolidFunctionSurface::Tesselate(const glm::vec2 &rangeU, const glm::vec2 &
 void CSolidFunctionSurface::Draw() const
 {
 	glCullFace(GL_FRONT);
+	// TODO: use glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	DoWithBindedArrays(m_vertices, m_isColored, [this] {
 		GLenum mode = (m_isFilled) ? GL_TRIANGLE_STRIP : GL_LINE_STRIP;
 		glDrawElements(mode, GLsizei(m_indicies.size()),
